@@ -24,7 +24,7 @@ def preprocess_data(df):
     return df
 
 if __name__ == "__main__":
-    dataset_path = "data/training.1600000.processed.noemoticon.csv"
+    dataset_path = "../data/training.1600000.processed.noemoticon.csv"
     df = load_dataset(dataset_path)
     df = preprocess_data(df)
     print(df.head())

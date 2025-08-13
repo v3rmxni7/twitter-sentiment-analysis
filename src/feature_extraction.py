@@ -29,13 +29,13 @@ if __name__ == "__main__":
     from sklearn.model_selection import train_test_split
 
     # Load and preprocess dataset
-    dataset_path = "data/training.1600000.processed.noemoticon.csv"
+    dataset_path = "../data/training.1600000.processed.noemoticon.csv"
     df = load_dataset(dataset_path)
     df = preprocess_data(df)
 
     # Split data
     X_train_text, X_test_text, y_train, y_test = train_test_split(
-        df['text'], df['target'], test_size=0.2, random_state=42
+        df['clean_text'], df['target'], test_size=0.2, random_state=42
     )
 
     # Extract features
@@ -44,5 +44,7 @@ if __name__ == "__main__":
     print("Shape of training data:", X_train.shape)
     print("Shape of testing data:", X_test.shape)
 
-    # Save vectorizer for later use
+    import os
+    os.makedirs("artifacts", exist_ok=True)  # creates folder if not exists
+    
     save_vectorizer(vectorizer, "artifacts/tfidf_vectorizer.pkl")
