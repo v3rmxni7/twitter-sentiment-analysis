@@ -18,9 +18,6 @@ def save_vectorizer(vectorizer, file_path):
         pickle.dump(vectorizer, f)
 
 def load_vectorizer(file_path):
-    """
-    Load a TF-IDF vectorizer from file.
-    """
     with open(file_path, 'rb') as f:
         return pickle.load(f)
 
@@ -43,8 +40,3 @@ if __name__ == "__main__":
 
     print("Shape of training data:", X_train.shape)
     print("Shape of testing data:", X_test.shape)
-
-    import os
-    os.makedirs("artifacts", exist_ok=True)  # creates folder if not exists
-    
-    save_vectorizer(vectorizer, "artifacts/tfidf_vectorizer.pkl")

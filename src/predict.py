@@ -1,34 +1,33 @@
-import os
 import pickle
-import pandas as pd
+from preprocessing import clean_tweet
+from feature_extraction import load_vectorizer
 
-class PredictPipeline:
-    def __init__(self):
-        # Go one level up from src/ → project root
-        base_dir = os.path.dirname(os.path.dirname(__file__))
+# File paths (use artifacts folder)
+MODEL_PATH = "artifacts/sentiment_model.pkl"
+VECTORIZER_PATH = "artifacts/tfidf_vectorizer.pkl"
 
-        model_path = os.path.join(base_dir, "models", "sentiment_model.pkl")
-        vectorizer_path = os.path.join(base_dir, "models", "tfidf_vectorizer.pkl")
+# Load model
+with open(MODEL_PATH, "rb") as f:
+    model = pickle.load(f)
 
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Model file not found at {model_path}")
-        if not os.path.exists(vectorizer_path):
-            raise FileNotFoundError(f"Vectorizer file not found at {vectorizer_path}")
+# Load vectorizer
+vectorizer = load_vectorizer(VECTORIZER_PATH)
 
-        with open(model_path, "rb") as f:
-            self.model = pickle.load(f)
-
-        with open(vectorizer_path, "rb") as f:
-            self.vectorizer = pickle.load(f)
-
-    def predict(self, text):
-        data = pd.Series([text])
-        transformed_data = self.vectorizer.transform(data)
-        prediction = self.model.predict(transformed_data)
-        return prediction[0]
+def predict_sentiment(text):
+    # Clean and transform
+    cleaned_text = clean_tweet(text)
+    features = vectorizer.transform([cleaned_text])
+    # Predict
+    return model.predict(features)[0]
 
 if __name__ == "__main__":
-    pipeline = PredictPipeline()
-    text_input = input("Enter a tweet: ")
-    sentiment = pipeline.predict(text_input)
-    print(f"Predicted Sentiment: {sentiment}")
+    sample_tweets = [
+        "I love this product! It's amazing",
+        "Worst experience ever, I want a refund.",
+        "The weather is nice today."
+    ]
+
+    for tweet in sample_tweets:
+        sentiment = predict_sentiment(tweet)
+        print(f"Tweet: {tweet}")
+        print(f"Predicted Sentiment: {sentiment}\n")
